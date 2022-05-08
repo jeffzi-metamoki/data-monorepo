@@ -1,0 +1,21 @@
+[GLOBAL]
+pants_version = "2.11.0"
+backend_packages = ["pants.backend.python"]
+
+[python]
+default_resolve = "default"
+enable_resolves = true
+interpreter_constraints = ["==3.9.*"]
+lockfile_generator = "pex"
+tailor_ignore_solitary_init_files = false
+
+[python-infer]
+inits = true
+
+[python.resolves]
+default = "3rdparty/python/default.lock"
+
+[anonymous-telemetry]
+enabled = true
+# Randomly generated with `uuidgen --random`
+repo_id = "30b442b0-4b33-4ebc-b50c-a3c7d627afba"

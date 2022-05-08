@@ -1,0 +1,199 @@
+# https://github.com/github/gitignore
+
+## Logs -----------------------------------------------------------------------
+logs/
+*.log
+
+# MacOS -----------------------------------------------------------------------
+.DS_Store
+
+# Taskfile --------------------------------------------------------------------
+.task/
+
+## Pantsbuild -----------------------------------------------------------------
+
+/.pants.d/
+/.pants.workdir.file_lock*
+/.pids
+/dist
+
+## dbt -----------------------------------------------------------------------
+
+.user.yml
+dbt_modules/
+profiles.yml
+target/
+
+## IDE ------------------------------------------------------------------------
+
+# vscode
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/settings.json
+!.vscode/tasks.json
+.history/
+.vscode/
+*.code-workspace
+
+.idea/
+.ropeproject/
+*.iml
+
+## Python ---------------------------------------------------------------------
+
+# Environments
+!.envrc
+.python-version
+.venv*
+venv*
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Cython debug symbols
+cython_debug/
+
+# Distribution / packaging
+.eggs/
+.installed.cfg
+.Python
+*.egg
+*.egg-info/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+lib/
+lib64/
+MANIFEST
+parts/
+sdist/
+share/python-wheels/
+var/
+wheels/
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-delete-this-directory.txt
+pip-log.txt
+
+# Unit test / coverage reports
+.*cache
+.coverage
+.coverage.*
+.hypothesis/
+.nox/
+.pytest_cache/
+.tox/
+*.cover
+*.py,cover
+cover/
+coverage.xml
+htmlcov/
+nosetests.xml
+
+# Translations
+*.mo
+*.pot
+
+# Sphinx documentation
+docs/_build/
+
+# mkdocs documentation
+/site
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow
+__pypackages__/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+## R ---------------------------------------------------------------------
+
+# History files
+.Rhistory
+.Rapp.history
+
+# Session Data files
+.RData
+
+# User-specific files
+.Ruserdata
+
+# Example code in package build process
+*-Ex.R
+
+# Output files from R CMD build
+/*.tar.gz
+
+# Output files from R CMD check
+/*.Rcheck/
+
+# RStudio files
+.Rproj.user/
+
+# produced vignettes
+vignettes/*.html
+vignettes/*.pdf
+
+# OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
+.httr-oauth
+
+# knitr and R markdown default cache directories
+*_cache/
+/cache/
+
+# Temporary files created by R markdown
+*.utf8.md
+*.knit.md
+
+# R Environment Variables
+.Renviron
+
+# pkgdown site
+docs/
+
+# translation temp files
+po/*~
+
+## aws lambda -----------------------------------------------------------------
+
+.layer/
+.requirements.zip
+.serverless/
+node_modules/
+package-lock.json
+package.json
+unzip_requirements.py
+infrastructure/redash-instance/opt/redash/env
+infrastructure/redash-instance/keys/redash-metamoki-com-ssh-key.pem
