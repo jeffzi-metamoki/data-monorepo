@@ -47,3 +47,15 @@ An application:
 - can consume code from libraries
     
 A monorepo can contain multiple applications and multiple libraries.
+
+## Basic usage
+
+Listing available applications:
+```bash
+task list-apps
+```
+
+Running an application:
+```bash
+task run -- app1_pex src/python/apps/app1/conf/conf.yml
+```
