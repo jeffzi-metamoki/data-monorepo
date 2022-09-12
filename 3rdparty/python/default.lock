@@ -6,7 +6,7 @@
 // {
 //   "version": 2,
 //   "valid_for_interpreter_constraints": [
-//     "CPython==3.8.*"
+//     "CPython==3.9.*"
 //   ],
 //   "generated_with_requirements": [
 //     "typer"
@@ -100,8 +100,8 @@
         }
       ],
       "platform_tag": [
-        "cp38",
-        "cp38",
+        "cp39",
+        "cp39",
         "manylinux_2_34_x86_64"
       ]
     }
@@ -113,7 +113,7 @@
     "typer"
   ],
   "requires_python": [
-    "==3.8.*"
+    "==3.9.*"
   ],
   "resolver_version": "pip-2020-resolver",
   "style": "universal",
