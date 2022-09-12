@@ -1,0 +1,29 @@
+version: "3"
+
+silent: true
+
+vars:
+  RED:
+    sh: tput setaf 1
+  GREEN:
+    sh: tput setaf 2
+  YELLOW:
+    sh: tput setaf 3
+  BLUE:
+    sh: tput setaf 4
+  PURPLE:
+    sh: tput setaf 5
+  CYAN:
+    sh: tput setaf 6
+  GRAY:
+    sh: tput setaf 7
+  BOLD:
+    sh: tput bold
+  RESET:
+    sh: tput sgr0
+  SEPARATOR:
+    sh: |-
+      N=$(tput cols)
+      for((i = 0; i < $N; ++i)); do
+        printf ─
+      done

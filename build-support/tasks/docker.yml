@@ -1,0 +1,101 @@
+version: "3"
+
+silent: false
+
+includes:
+  color: ./color.yml
+  preconditions: ./preconditions.yml
+
+vars:
+  PYTHON_VERSION: 3.9
+  GIT_ROOT:
+    sh: git rev-parse --show-toplevel
+  REPO:
+    sh: basename `git rev-parse --show-toplevel`
+  IMAGE: "{{.REPO}}"
+  TODAY: '{{now | date "2006-01-02"}}'
+
+tasks:
+  build:
+    deps: [preconditions:has-docker]
+    interactive: true
+    dir: "{{.GIT_ROOT}}"
+    env:
+      DOCKER_BUILDKIT: 1
+      BUILDKIT_SANDBOX_HOSTNAME: pants
+    cmds:
+      - echo "{{.PURPLE}}🐳 Building docker image {{.YELLOW}}{{.IMAGE}}{{.RESET}}"
+      - >
+        docker build
+        --pull
+        --tag={{.IMAGE}}:{{.TODAY}} 
+        --tag={{.IMAGE}}:latest
+        --build-arg REPO="{{.REPO}}"
+        --build-arg PYTHON_VERSION="{{.PYTHON_VERSION}}"
+        --file=build-support/Dockerfile
+        .
+    sources:
+      - build-support/Dockerfile
+      - pants
+      - pants.toml
+
+  bootstrap:
+    interactive: true
+    vars:
+      CMD: "{{.CMD | default .CLI_ARGS}}"
+      # Make container name unique in case multiple containers are started concurrently.
+      USER: pantsuser
+      CONTAINER_HOME: /home/{{.USER}}/{{.REPO}}
+      LOCAL_PANTS_CACHE: ~/.cache/pants
+      CONTAINER_PANTS_CACHE: /home/{{.USER}}/.cache/pants
+    cmds:
+      - |
+        if [[ -z "$(docker image ls {{.IMAGE}} --format=true)" ]];
+        then
+          task docker:build --force;
+        else
+          task docker:build
+        fi
+      - mkdir -p {{.LOCAL_PANTS_CACHE}}
+      - echo "{{.PURPLE}}🐳 Starting docker container {{.YELLOW}}{{.IMAGE}}{{.RESET}} in detached mode"
+      # - ulimit -> https://www.pantsbuild.org/docs/troubleshooting#too-many-open-files-error
+      # - Expose docker socket so that it can be used by pants to start containers.
+      - |
+        docker run \
+          -di \
+          --rm \
+          --user {{.USER}} \
+          --ulimit nofile=10000 \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          -v {{.GIT_ROOT}}:{{.CONTAINER_HOME}} \
+          -v {{.LOCAL_PANTS_CACHE}}:{{.CONTAINER_PANTS_CACHE}} \
+          --name={{.IMAGE}} \
+          {{.IMAGE}} \
+          &>/dev/null
+    status:
+      - test "$( docker container inspect -f '{{`{{.State.Status}}`}}' {{.IMAGE}} )" == "running"
+
+  exec:
+    deps: [bootstrap]
+    interactive: true
+    vars:
+      CMD: "{{.CMD | default .CLI_ARGS}}"
+    cmds:
+      - docker exec {{.IMAGE}} {{.CMD}}
+
+  stop:
+    deps: [preconditions:has-docker]
+    cmds:
+      - docker ps -q --filter "name={{.IMAGE}}" | xargs -r docker stop
+
+  rm:
+    deps: [stop]
+    cmds:
+      - |-
+        if [[ $(docker image ls {{.IMAGE}} --format="true") ]];
+        then
+          echo "{{.PURPLE}}🐳 Removing docker image {{.YELLOW}}{{.IMAGE}}{{.RESET}}";
+          docker rmi --force $(docker images -q '{{.IMAGE}}' | uniq);
+        else
+          echo "{{.PURPLE}}🐳 Nothing to clean";
+        fi

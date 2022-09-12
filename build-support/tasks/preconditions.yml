@@ -1,0 +1,29 @@
+version: "3"
+
+silent: true
+
+tasks:
+  has-aws:
+    preconditions:
+      - sh: aws --version
+        msg: |-
+          You must have awscli installed.
+          For install instructions, see https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html
+          Install it and then run 'aws configure'.
+
+  has-docker:
+    preconditions:
+      - sh: '[[ $(docker -v) == *"Docker version 2"* ]]'
+        msg: |-
+          You must have Docker > 20.* installed.
+          For install instructions, see https://docs.docker.com/get-docker/
+
+  check-env:
+    preconditions:
+      - sh: '[ -n "$ENV" ] && ([ "$ENV" = "dev" ] || [ "$ENV" = "prod" ])'
+        msg: "You must run task with: ENV=[dev|prod] ENV_VARS... task TASK_NAME"
+
+  forbid-cliargs:
+    preconditions:
+      - sh: '[ -z "{{.CLI_ARGS}}" ]'
+        msg: "This task does not accept CLI args"

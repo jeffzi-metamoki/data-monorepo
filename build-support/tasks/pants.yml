@@ -1,0 +1,41 @@
+version: "3"
+
+includes:
+  color: ./color.yml
+  docker: ./docker.yml
+
+tasks:
+  pants:
+    vars:
+      CMD: "{{.CMD | default .CLI_ARGS}}"
+    cmds:
+      - task docker:exec -- ./pants --level=warn {{.CMD}}
+
+  list-binaries:
+    vars:
+      TARGETS:
+        sh: "task pants -- filter --target-type=pex_binary ::"
+    cmds:
+      # Extract app names from pants addresses
+      - |
+        {{range $i, $target := .TARGETS | splitLines }}
+        echo {{$target}} | sed 's/.*:\(.*\)$/\1/'
+        {{ end}}
+
+  run:
+    interactive: true
+    vars:
+      APP: '{{(splitn " " 2 .CLI_ARGS)._0 }}'
+      ARGS: '{{(splitn " " 2 .CLI_ARGS)._1 }}'
+    cmds:
+      - |
+        ADDRESS=$(task -s pants:pants -- filter --target-type=pex_binary --address-regex=':{{.APP}}$' :: | tr -d "\n")
+        if [ -z $ADDRESS ]
+        then
+          echo "{{.YELLOW}}{{.APP}}{{.PURPLE}} is not a valid binary target."
+          echo "{{.PURPLE}}Run {{.YELLOW}}task pants:list-binaries{{.RESET}}{{.PURPLE}} to see available binaries.{{.RESET}}"
+          exit 1
+        fi
+
+        echo "{{.CYAN}}{{.CLI_ARGS}}{{.RESET}}"
+        task pants:pants -- run ${ADDRESS} -- {{.ARGS}}

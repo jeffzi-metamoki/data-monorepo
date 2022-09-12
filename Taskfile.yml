@@ -1,0 +1,34 @@
+version: "3"
+
+includes:
+  color: build-support/tasks/color.yml
+  docker: build-support/tasks/docker.yml
+  pants: build-support/tasks/pants.yml
+  preconditions: build-support/tasks/preconditions.yml
+
+silent: true
+
+tasks:
+  clean:
+    desc: Stop docker container and clean cache
+    deps: [preconditions:has-docker]
+    cmds:
+      - task: docker:stop
+      - rm -rf .cache
+      - rm -rf .pants.d
+      - rm -rf .pids
+
+  pants:
+    desc: Run a pantsbuild command
+    cmds:
+      - task: pants:pants
+
+  list-apps:
+    desc: List apps
+    cmds:
+      - task: pants:list-binaries
+
+  run:
+    desc: Run an app
+    cmds:
+      - task: pants:run
